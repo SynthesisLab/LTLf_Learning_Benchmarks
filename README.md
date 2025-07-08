@@ -2,7 +2,7 @@
 
 This repository contains 10 families of LTLf learning benchmarks. We include scripts to generate instances for all families, with many parameters allowing to generate instances with various number of traces and trace lengths. 
 
-There are over 15_000 learning problems, which makes for 2GB of files, by only 2Mo in zipped format so we included the zip file as releaset asset.
+There are over 15_000 learning problems, which makes for 2GB of files, by only 100MB in zipped format so we included the zip file as releaset asset.
 
 ## Format
 
