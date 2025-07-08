@@ -1,0 +1,1 @@
+F(var1) -> (var0 U var1);['var0', 'var1'];universality2;https://github.com/ivan-gavran/samples2LTL,https://dl.acm.org/doi/abs/10.1145/298595.298598
