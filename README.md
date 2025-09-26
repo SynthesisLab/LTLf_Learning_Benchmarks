@@ -3,7 +3,7 @@
 This repository contains $10$ families of $\mathsf{LTL}_f$-learning benchmarks.
 We include scripts to generate instances for all families, with many parameters that allow generating instances with various numbers of traces and trace lengths.
 
-There are over $15,\!000$ $\mathsf{LTL}_f$-learning problems, which amount to 2 GB in total, but only about 100 MB in zipped format. We include the `.zip` file with all instances as a [release asset](https://github.com/SynthesisLab/LTLf_Learning_Benchmarks/releases/tag/benchmark).
+There are over 15,000 $\mathsf{LTL}_f$-learning problems, which amount to 2 GB in total, but only about 100 MB in zipped format. We include the `.zip` file with all instances as a [release asset](https://github.com/SynthesisLab/LTLf_Learning_Benchmarks/releases/tag/benchmark).
 
 ## Format
 
