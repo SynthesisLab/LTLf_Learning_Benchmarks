@@ -4,7 +4,7 @@ import argparse
 
 def generate_Hamming(L: int, K: int, n_neg: int, delta: int, seed: int) -> dict:
     """
-    Generates an instance for LTL learning with specified parameters.
+    Generates an instance for LTLf learning with specified parameters.
 
     Args:
         L: Length of the desired traces.
@@ -14,7 +14,7 @@ def generate_Hamming(L: int, K: int, n_neg: int, delta: int, seed: int) -> dict:
         seed: Random seed.
 
     Returns:
-        A JSON dictionary representing the LTL learning instance.
+        A JSON dictionary representing the LTLf learning instance.
     """
     random.seed(seed)
 

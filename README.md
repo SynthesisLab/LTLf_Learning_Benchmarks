@@ -58,7 +58,7 @@ Additional metadata such as `number_traces`, `number_positive_traces`, `number_n
 ## Sampling
 
 The main script is [`sample.py`](./sample.py).
-It takes as an input a text file (such as [this one](./Fixed_Formulas/absence1.txt)) containing a semicolon-separated text file with four fields: `formula`; `atomic_propositions`;`name`;`source`.
+It takes as an input a semicolon-separated text file (such as [this one](./Fixed_Formulas/absence1.txt)) with four fields: `formula`;`atomic_propositions`;`name`;`source`.
 It creates an $\mathsf{LTL}_f$-learning instance by sampling a given number of positive and negative traces of a given length uniformly at random.
 It builds upon the approach developed in [Scarlet](https://github.com/rajarshi008/Scarlet), compiling the $\mathsf{LTL}_f$ formula into a deterministic automaton and using it to sample traces.
 

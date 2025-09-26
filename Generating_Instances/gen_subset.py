@@ -4,7 +4,7 @@ import argparse
 
 def generate_subset(L: int, K: int, n_pos: int, n_neg: int, k: int, seed: int):
     """
-    Generates an instance for LTL learning with specified parameters.
+    Generates an instance for LTLf learning with specified parameters.
 
     Args:
         L: Length of the desired traces.
@@ -15,7 +15,7 @@ def generate_subset(L: int, K: int, n_pos: int, n_neg: int, k: int, seed: int):
         seed: Random seed.
 
     Returns:
-        A JSON dictionary representing the LTL learning instance.
+        A JSON dictionary representing the LTLf learning instance.
     """
     random.seed(seed)
 

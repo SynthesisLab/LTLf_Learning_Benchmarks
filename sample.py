@@ -1,8 +1,21 @@
+"""Sample traces for LTLf formulas using Spot and BuDDy.
+
+Usage:
+    python3 sample.py <formula_file> <number> <length> [-s/--seed <seed>]
+
+Requirements:
+    Spot model-checker and Spot's Python bindings.
+    BuDDy BDD library and the Python `buddy` bindings.
+"""
+
 from dataclasses import dataclass
 import random
 import spot
 import buddy
 import logging
+
+# Module logger
+logger = logging.getLogger(__name__)
 
 
 class Trace:
@@ -10,15 +23,14 @@ class Trace:
     Class to store a trace.
     """
 
-    trace: list[list[int]]  # trace[i] = i-th letter of the trace, i.e., a list of
-
-    # 0s and 1s where the j-th element is the value of
+    trace: list[list[int]]  # trace[i] = i-th letter of the trace, i.e., a list 
+    # of 0s and 1s where the j-th element is the value of
     # the j-th propositional variable in the same order
     # as in `ap`.
     def __init__(self, ap: list[str], length: int) -> None:
         self.trace = [[0] * len(ap) for _ in range(length)]
 
-    def format_json(self, ap) -> dict[list[int]]:
+    def format_json(self, ap: list[str]) -> dict[str, list[int]]:
         """
         Returns the trace as a list of lists of 0s and 1s, where list[i][j]
         is the value of the i-th atomic proposition (from ap) at the j-th
@@ -281,7 +293,7 @@ def sample_letter_from_BDD(bdd: buddy.bdd, cache: AutomatonCache) -> list[int]:
     return assignment
 
 
-def compile(formula: str, ap: list[str]) -> spot.twa_graph:
+def compile_formula(formula: str, ap: list[str]) -> spot.twa_graph:
     f = spot.from_ltlf(formula)
     aut = f.translate("buchi", "sbacc", "deterministic")
     automaton = spot.to_finite(aut)
@@ -309,11 +321,11 @@ def _prog_dyn_table_length(cache: AutomatonCache) -> None:
 
     # Initialize the dynamic programming tables
     prog_dyn_table = {
-        length: {q: 0 for q in range(automaton.num_states())} for length in range(length + 1)
+        l: {q: 0 for q in range(automaton.num_states())} for l in range(length + 1)
     }
     prog_dyn_table_transitions = {
-        length: {state: [] for state in range(automaton.num_states())}
-        for length in range(length + 1)
+        l: {state: [] for state in range(automaton.num_states())}
+        for l in range(length + 1)
     }
 
     # Base case: empty trace
@@ -339,7 +351,7 @@ def _prog_dyn_table_length(cache: AutomatonCache) -> None:
             # This may introduce a very small bias in the uniform sampling
             divisor = total_weights_l // MAX_WEIGHT
             assert divisor > 0, "Invalid divisor: {}".format(divisor)
-            logging.info("Huge weights in the automaton: dividing weights by {}".format(divisor))
+            logger.info("Huge weights in the automaton: dividing weights by {}".format(divisor))
 
             def reduce(x):
                 if x > 0:
@@ -441,8 +453,8 @@ def sample_distinct_traces(
         error_message = "Not enough distinct traces of length {} in the automaton (in_the_language={}): {} < {}".format(
             length, in_the_language, count_traces, number_traces
         )
-        logging.error(error_message)
-        assert False, error_message + "\n"
+        logger.error(error_message)
+        raise RuntimeError(error_message + "\n")
 
     # Sample the traces
     set_of_traces = set()
@@ -458,23 +470,27 @@ def prepare_cache(formula: str, ap: list[str], length: int) -> AutomatonCache:
     Prepares the cache for the formula `formula` with the atomic
     propositions `ap` and the length of traces `length`.
     """
-    automaton = compile(formula, ap=ap)
-    logging.debug("Automaton\n%s", automaton.to_str("hoa"))
-    assert spot.is_complete(automaton), "The automaton is not complete"
-    assert spot.is_deterministic(automaton), "The automaton is not deterministic"
-    assert sorted([str(a) for a in automaton.ap()]) == sorted(ap), (
-        "The automaton does not have the same atomic propositions as the formula: {} != {}".format(
-            sorted([str(a) for a in automaton.ap()]), sorted(ap)
+    automaton = compile_formula(formula, ap=ap)
+    logger.debug("Automaton\n%s", automaton.to_str("hoa"))
+    if not spot.is_complete(automaton):
+        raise RuntimeError("The automaton is not complete")
+    if not spot.is_deterministic(automaton):
+        raise RuntimeError("The automaton is not deterministic")
+    if sorted([str(a) for a in automaton.ap()]) != sorted(ap):
+        raise RuntimeError(
+            "The automaton does not have the same atomic propositions as the formula: {} != {}".format(
+                sorted([str(a) for a in automaton.ap()]), sorted(ap)
+            )
         )
-    )
 
     order = Ordering(automaton.get_dict(), ap)
     # Careful: automaton.ap() may follow an order different from ap (as not all
     # atomic propositions necessarily appear in the formula)
     # Throughout the code, we use the order of ap.
-    assert len(ap) == order.len(), (
-        "The length of the alphabet is not equal to the number of variables in the BDD order."
-    )
+    if len(ap) != order.len():
+        raise RuntimeError(
+            "The length of the alphabet is not equal to the number of variables in the BDD order."
+        )
 
     cache = AutomatonCache(formula, ap, automaton, length, order, {}, {}, {}, {})
 
@@ -495,7 +511,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "formula_file",
         type=str,
-        help="Text file containing the 'formula; atomic propositions (as a list); name; repository, source'",
+        help="Text file containing the 'formula; atomic propositions (as a list); name; repository/source'",
     )
     parser.add_argument(
         "number",
@@ -509,12 +525,12 @@ if __name__ == "__main__":
     nb_traces = args.number
     length = args.length
     seed = args.seed
-    logging.debug("Parsing arguments: %s", args)
+    logger.debug("Parsing arguments: %s", args)
     random.seed(seed)
 
     # Read the instance from the file
     file = args.formula_file
-    logging.info("Processing file %s...", file)
+    logger.info("Processing file %s...", file)
     with open(file, "r") as f:
         file_content = f.read().split(";")
     if len(file_content) != 4:
@@ -522,14 +538,14 @@ if __name__ == "__main__":
 
     # Declare the atomic propositions in the right order
     ap = ast.literal_eval(file_content[1])
-    logging.debug("Atomic propositions: %s", str(ap))
+    logger.debug("Atomic propositions: %s", str(ap))
     assert type(ap) == list, "The atomic propositions are not typeset as a Python list."
     assert all([type(a) == str for a in ap]), (
         "The atomic propositions are not typeset as Python strings."
     )
 
     formula = file_content[0]
-    logging.debug("Formula: %s", formula)
+    logger.debug("Formula: %s", formula)
 
     cache = prepare_cache(formula, ap, length)
 
@@ -567,4 +583,4 @@ if __name__ == "__main__":
     json_file_name = "{}_{}_{}_{}.json".format(file_name, nb_traces, length, seed)
     with open(json_file_name, "w") as f:
         json.dump(instance, f)
-    logging.info("Saved traces to %s!\n", json_file_name)
+    logger.info("Saved traces to %s!", json_file_name)

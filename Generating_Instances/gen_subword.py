@@ -23,15 +23,12 @@ def generate_subword(L: int, K: int, n_pos: int, n_neg: int, k: int, seed: int):
     atomic_propositions = [f"a{i}" for i in range(K)]
 
     subword = random.choices(atomic_propositions, k=k)
-    # print(subword)
     formula = write_subword_formula(subword)
-    # print(formula)
 
     # Generate random positive traces
     positive_traces = []
     while len(positive_traces) < n_pos:
         positive_trace = generate_positive_trace(subword, k, L, atomic_propositions)
-        # print(positive_trace)
         positive_traces.append(positive_trace)
 
     negative_traces_set = set()
