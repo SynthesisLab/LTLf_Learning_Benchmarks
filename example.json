@@ -21,7 +21,7 @@
         {
             "a0": [0, 1, 1, 0],
             "a1": [0, 1, 0, 0]
-        },
+        }
     ],
     "atomic_propositions": ["a0", "a1"],
     "number_atomic_propositions": 2,

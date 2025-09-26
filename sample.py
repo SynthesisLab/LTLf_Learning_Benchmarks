@@ -503,7 +503,7 @@ if __name__ == "__main__":
         help="Number of traces to sample (both for traces in and out the language).",
     )
     parser.add_argument("length", type=int, help="Length of the traces to sample.")
-    parser.add_argument("-seed", type=int, default=42, help="Seed (default 42).")
+    parser.add_argument("-s", "--seed", type=int, default=42, help="Seed (default 42).")
 
     args = parser.parse_args()
     nb_traces = args.number
