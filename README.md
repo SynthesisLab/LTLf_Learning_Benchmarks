@@ -5,6 +5,8 @@ We include scripts to generate instances for all families, with many parameters 
 
 There are over 15,000 $\mathsf{LTL}_f$-learning problems, which amount to 2 GB in total, but only about 100 MB in zipped format. We include the `.zip` file with all instances as a [release asset](https://github.com/SynthesisLab/LTLf_Learning_Benchmarks/releases/tag/benchmark).
 
+This benchmark suite was introduced in the paper [*LTL$_f$-Learning Meets Boolean Set Cover*](https://arxiv.org/abs/2509.24616) by Gabriel Bathie, Nathanaël Fijalkow, Théo Matricon, Baptiste Mouillon, and Pierre Vandenhove. The benchmarks were used to evaluate the tool [Bolt](https://github.com/SynthesisLab/Bolt).
+
 ## Format
 
 The benchmark files are structured in JSON format, with each file representing a learning problem.
